@@ -1,0 +1,21 @@
+{
+  "name": "@paisabridge/shared",
+  "version": "1.0.0",
+  "description": "Shared types, schemas, crypto utilities, and database adapter for PaisaBridge PK",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "typescript": "^5.5.4"
+  }
+}

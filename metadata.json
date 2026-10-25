@@ -1,0 +1,6 @@
+{
+  "name": "PaisaBridge PK",
+  "description": "Custom Payment Gateway SaaS for Pakistan (PKR) with Android SMS & Notification Bridge",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

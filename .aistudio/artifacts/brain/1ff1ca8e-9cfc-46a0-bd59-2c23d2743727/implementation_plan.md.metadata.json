@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan for Android Bridge App including NotificationListenerService, WorkManager offline queue, Room buffer, QR code pairing, HMAC security, and UI dashboard.",
+  "updatedAt":  "2026-10-25T15:19:50.527122671Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

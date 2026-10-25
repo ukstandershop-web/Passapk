@@ -1,0 +1,24 @@
+name = "paisabridge-worker"
+main = "src/index.ts"
+compatibility_date = "2024-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+crons = ["* * * * *"]
+
+[vars]
+PROXY_BASE_URL = "https://your-supabase-project.supabase.co"
+PROXY_PROJECT_NAME = "paisabridge"
+PUBLIC_CHECKOUT_URL = "https://paisabridge.vercel.app/pay"
+LOW_USAGE_MODE = "false"
+
+# KV Namespace binding for low-latency cached settings & tokens
+# In production run: wrangler kv:namespace create SETTINGS_KV
+[[kv_namespaces]]
+binding = "SETTINGS_KV"
+id = "SETTINGS_KV_ID"
+
+# Wrangler secrets to configure via `wrangler secret put <KEY>`:
+# - PROXY_MASTER_KEY
+# - ENCRYPTION_SECRET
+# - INTERNAL_SHARED_SECRET
