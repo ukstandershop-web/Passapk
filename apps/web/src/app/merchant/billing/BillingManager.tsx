@@ -16,7 +16,7 @@ export default function BillingManager({
 }: BillingManagerProps) {
   const [proofs, setProofs] = useState<BillingProof[]>(initialProofs);
   const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(merchant.tier || 'standard');
+  const [selectedPlan, setSelectedPlan] = useState<string>(merchant.tier || 'standard');
   const [amountPaid, setAmountPaid] = useState('2500');
   const [senderAccount, setSenderAccount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('JazzCash');

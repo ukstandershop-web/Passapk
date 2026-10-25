@@ -10,7 +10,7 @@ export async function POST(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const jobId = params.id;
@@ -22,7 +22,7 @@ export async function POST(
     });
 
     if (!job) {
-      return NextResponse.json({ error: 'Webhook job not found' }, 404);
+      return NextResponse.json({ error: 'Webhook job not found' }, { status: 404 });
     }
 
     const payloadString = typeof job.payload === 'string' ? job.payload : JSON.stringify(job.payload);
@@ -75,6 +75,6 @@ export async function POST(
       job: updatedJob,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to resend webhook' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to resend webhook' }, { status: 500 });
   }
 }

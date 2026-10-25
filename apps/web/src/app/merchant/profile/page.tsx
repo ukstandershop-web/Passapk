@@ -33,7 +33,7 @@ export default async function ProfilePage() {
     <ProfileSecurityManager
       userEmail={session.email}
       userRole={session.role}
-      merchantId={session.merchantId}
+      merchantId={session.merchantId || undefined}
       totpEnabled={totpEnabled}
       initialLogs={logs}
     />

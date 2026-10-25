@@ -15,8 +15,7 @@ export async function POST(request: Request) {
     });
 
     if (existingOwner) {
-      return NextResponse.json(
-        { error: 'Setup is permanently disabled because an owner account already exists.' },
+      return NextResponse.json({ error: 'Setup is permanently disabled because an owner account already exists.' },
         { status: 403 }
       );
     }
@@ -25,11 +24,11 @@ export async function POST(request: Request) {
     const { name, email, password } = body;
 
     if (!name || !email || !password) {
-      return NextResponse.json({ error: 'Name, email, and password are required.' }, 400);
+      return NextResponse.json({ error: 'Name, email, and password are required.' }, { status: 400 });
     }
 
     if (password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters long.' }, 400);
+      return NextResponse.json({ error: 'Password must be at least 8 characters long.' }, { status: 400 });
     }
 
     const passwordHash = await hashPassword(password);
@@ -92,6 +91,6 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Setup initialization failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Setup initialization failed' }, { status: 500 });
   }
 }

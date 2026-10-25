@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
@@ -18,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, keys });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch API keys' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch API keys' }, { status: 500 });
   }
 }
 
@@ -26,14 +26,14 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { name, is_live, ip_whitelist } = body;
 
     if (!name || typeof name !== 'string') {
-      return NextResponse.json({ error: 'Key name is required' }, 400);
+      return NextResponse.json({ error: 'Key name is required' }, { status: 400 });
     }
 
     const live = is_live !== false; // default true
@@ -63,8 +63,7 @@ export async function POST(request: Request) {
       ip_whitelist: ips,
     });
 
-    return NextResponse.json(
-      {
+    return NextResponse.json({
         success: true,
         key: newKey,
         raw_secret: rawSecret, // Displayed ONCE to user
@@ -72,6 +71,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to generate API key' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to generate API key' }, { status: 500 });
   }
 }

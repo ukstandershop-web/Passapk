@@ -9,7 +9,7 @@ export async function PATCH(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const accountId = params.id;
@@ -27,7 +27,7 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, account: updated });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to update account' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to update account' }, { status: 500 });
   }
 }
 
@@ -38,7 +38,7 @@ export async function DELETE(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const accountId = params.id;
@@ -51,6 +51,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: 'Account deleted' });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to delete account' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to delete account' }, { status: 500 });
   }
 }

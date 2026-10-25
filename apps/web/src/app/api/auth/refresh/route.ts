@@ -11,12 +11,12 @@ export async function POST() {
     const refreshToken = cookieStore.get('pb_refresh_token')?.value;
 
     if (!refreshToken) {
-      return NextResponse.json({ error: 'No refresh token provided' }, 401);
+      return NextResponse.json({ error: 'No refresh token provided' }, { status: 401 });
     }
 
     const payload = await verifyJwt<any>(refreshToken, JWT_SECRET);
     if (!payload || payload.type !== 'refresh') {
-      return NextResponse.json({ error: 'Invalid or expired refresh token' }, 401);
+      return NextResponse.json({ error: 'Invalid or expired refresh token' }, { status: 401 });
     }
 
     const db = getDb();
@@ -25,7 +25,7 @@ export async function POST() {
     });
 
     if (!user || user.token_version !== payload.tokenVersion) {
-      return NextResponse.json({ error: 'Session revoked. Please log in again.' }, 401);
+      return NextResponse.json({ error: 'Session revoked. Please log in again.' }, { status: 401 });
     }
 
     // Check merchant status if applicable
@@ -35,7 +35,7 @@ export async function POST() {
         filters: { id: user.merchant_id },
       });
       if (merchant && (merchant.status === 'banned' || merchant.status === 'suspended' || !merchant.is_active)) {
-        return NextResponse.json({ error: 'Merchant account is suspended or banned.' }, 403);
+        return NextResponse.json({ error: 'Merchant account is suspended or banned.' }, { status: 403 });
       }
     }
 
@@ -71,6 +71,6 @@ export async function POST() {
 
     return response;
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Token refresh failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Token refresh failed' }, { status: 500 });
   }
 }

@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const { email } = body;
 
     if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, 400);
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     const cleanEmail = email.toLowerCase().trim();
@@ -54,6 +54,6 @@ export async function POST(request: Request) {
       dev_reset_link: resetUrl,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Forgot password failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Forgot password failed' }, { status: 500 });
   }
 }

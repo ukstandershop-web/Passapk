@@ -7,13 +7,13 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
     const merchant = await db.selectOne<Merchant>('merchants', { id: session.merchantId });
     if (!merchant) {
-      return NextResponse.json({ error: 'Merchant not found' }, 404);
+      return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
     }
 
     const proofs = await db.select<BillingProof>('billing_proofs', {
@@ -27,7 +27,7 @@ export async function GET() {
       proofs,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch billing info' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch billing info' }, { status: 500 });
   }
 }
 
@@ -35,14 +35,14 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { plan_id, amount_paid, sender_account, payment_method, proof_data_url } = body;
 
     if (!amount_paid || !sender_account || !payment_method) {
-      return NextResponse.json({ error: 'Please fill in all payment details' }, 400);
+      return NextResponse.json({ error: 'Please fill in all payment details' }, { status: 400 });
     }
 
     const db = getDb();
@@ -59,6 +59,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, proof: newProof }, { status: 201 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to submit renewal proof' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to submit renewal proof' }, { status: 500 });
   }
 }

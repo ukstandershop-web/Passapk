@@ -9,7 +9,7 @@ export async function DELETE(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const deviceId = params.id;
@@ -22,6 +22,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: 'Bridge device revoked successfully' });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to revoke device' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to revoke device' }, { status: 500 });
   }
 }

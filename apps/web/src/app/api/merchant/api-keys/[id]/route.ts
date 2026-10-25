@@ -10,7 +10,7 @@ export async function DELETE(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const keyId = params.id;
@@ -23,7 +23,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: 'API key revoked permanently' });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to revoke API key' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to revoke API key' }, { status: 500 });
   }
 }
 
@@ -35,7 +35,7 @@ export async function PATCH(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const keyId = params.id;
@@ -48,7 +48,7 @@ export async function PATCH(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: 'API key not found' }, 404);
+      return NextResponse.json({ error: 'API key not found' }, { status: 404 });
     }
 
     const secretPrefix = existing.is_live ? 'sk_live_' : 'sk_test_';
@@ -70,6 +70,6 @@ export async function PATCH(
       new_raw_secret: newRawSecret,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to rotate API key' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to rotate API key' }, { status: 500 });
   }
 }

@@ -10,7 +10,7 @@ export async function DELETE(
   try {
     const session = await getSession();
     if (!session || !session.merchantId || session.role !== 'merchant') {
-      return NextResponse.json({ error: 'Unauthorized' }, 403);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     const userId = params.id;
@@ -23,7 +23,7 @@ export async function DELETE(
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'Staff member not found' }, 404);
+      return NextResponse.json({ error: 'Staff member not found' }, { status: 404 });
     }
 
     // Delete user (cascade deletes permissions)
@@ -31,7 +31,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: 'Team member removed' });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to remove team member' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to remove team member' }, { status: 500 });
   }
 }
 
@@ -42,7 +42,7 @@ export async function PATCH(
   try {
     const session = await getSession();
     if (!session || !session.merchantId || session.role !== 'merchant') {
-      return NextResponse.json({ error: 'Unauthorized' }, 403);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     const userId = params.id;
@@ -56,7 +56,7 @@ export async function PATCH(
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'Staff member not found' }, 404);
+      return NextResponse.json({ error: 'Staff member not found' }, { status: 404 });
     }
 
     const updatedPerms = await db.update<StaffPermission>(
@@ -75,6 +75,6 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, permissions: updatedPerms });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to update permissions' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to update permissions' }, { status: 500 });
   }
 }

@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
@@ -18,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, devices });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch devices' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch devices' }, { status: 500 });
   }
 }
 
@@ -26,14 +26,14 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { device_name, device_model } = body;
 
     if (!device_name) {
-      return NextResponse.json({ error: 'Device name is required' }, 400);
+      return NextResponse.json({ error: 'Device name is required' }, { status: 400 });
     }
 
     const db = getDb();
@@ -67,8 +67,7 @@ export async function POST(request: Request) {
       merchant_id: session.merchantId,
     };
 
-    return NextResponse.json(
-      {
+    return NextResponse.json({
         success: true,
         device: newDevice,
         raw_secret: rawSecret,
@@ -77,6 +76,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to pair device' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to pair device' }, { status: 500 });
   }
 }

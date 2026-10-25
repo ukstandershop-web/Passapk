@@ -32,7 +32,7 @@ export async function POST(
     }
 
     // Generate impersonation token
-    const tokens = createAuthTokens(
+    const tokens = await createAuthTokens(
       {
         userId: merchantUser.id,
         email: merchantUser.email,

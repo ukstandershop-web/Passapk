@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@paisabridge/shared": "workspace:*",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
     "lucide-react": "^0.428.0",

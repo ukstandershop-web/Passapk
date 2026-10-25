@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
@@ -46,6 +46,6 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Logout-all failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Logout-all failed' }, { status: 500 });
   }
 }

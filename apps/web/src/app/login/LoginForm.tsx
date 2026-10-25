@@ -8,7 +8,7 @@ import { Mail, KeyRound, ShieldCheck, ArrowRight, Loader2, AlertCircle, Globe } 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get('redirect') || '';
+  const redirectPath = searchParams ? searchParams.get('redirect') || '' : '';
 
   const [lang, setLang] = useState<'en' | 'ur'>('en');
   const [email, setEmail] = useState('');

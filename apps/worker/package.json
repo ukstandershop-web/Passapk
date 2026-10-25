@@ -9,7 +9,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@paisabridge/shared": "workspace:*",
+    "@paisabridge/shared": "file:../../packages/shared",
     "hono": "^4.5.11",
     "zod": "^3.23.8"
   },

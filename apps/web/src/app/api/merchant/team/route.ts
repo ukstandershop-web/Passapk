@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId || session.role !== 'merchant') {
-      return NextResponse.json({ error: 'Unauthorized. Only primary merchants can manage team.' }, 403);
+      return NextResponse.json({ error: 'Unauthorized. Only primary merchants can manage team.' }, { status: 403 });
     }
 
     const db = getDb();
@@ -43,7 +43,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, team });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch team members' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch team members' }, { status: 500 });
   }
 }
 
@@ -51,14 +51,14 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId || session.role !== 'merchant') {
-      return NextResponse.json({ error: 'Unauthorized' }, 403);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     const body = await request.json();
     const { email, password, permissions } = body;
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email and initial password are required' }, 400);
+      return NextResponse.json({ error: 'Email and initial password are required' }, { status: 400 });
     }
 
     const db = getDb();
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     // Check if user already exists
     const existing = await db.selectOne<any>('users', { email: email.toLowerCase().trim() });
     if (existing) {
-      return NextResponse.json({ error: 'A user with this email already exists' }, 400);
+      return NextResponse.json({ error: 'A user with this email already exists' }, { status: 400 });
     }
 
     const passwordHash = await hashPassword(password);
@@ -92,8 +92,7 @@ export async function POST(request: Request) {
       can_manage_webhooks: !!permissions?.can_manage_webhooks,
     });
 
-    return NextResponse.json(
-      {
+    return NextResponse.json({
         success: true,
         member: {
           id: newUser.id,
@@ -106,6 +105,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to add team member' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to add team member' }, { status: 500 });
   }
 }

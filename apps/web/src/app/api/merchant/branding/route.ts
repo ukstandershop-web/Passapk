@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
@@ -26,7 +26,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, branding });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch branding' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch branding' }, { status: 500 });
   }
 }
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -69,6 +69,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, branding: result });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to save branding' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to save branding' }, { status: 500 });
   }
 }

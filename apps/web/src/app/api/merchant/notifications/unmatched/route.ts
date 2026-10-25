@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
@@ -22,7 +22,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, notifications: unmatched });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch unmatched notifications' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch unmatched notifications' }, { status: 500 });
   }
 }
 
@@ -30,14 +30,14 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { action, notification_id, transaction_id, refund_note } = body;
 
     if (!notification_id) {
-      return NextResponse.json({ error: 'notification_id is required' }, 400);
+      return NextResponse.json({ error: 'notification_id is required' }, { status: 400 });
     }
 
     const db = getDb();
@@ -47,12 +47,12 @@ export async function POST(request: Request) {
     });
 
     if (!rawNotif) {
-      return NextResponse.json({ error: 'Notification not found' }, 404);
+      return NextResponse.json({ error: 'Notification not found' }, { status: 404 });
     }
 
     if (action === 'assign') {
       if (!transaction_id) {
-        return NextResponse.json({ error: 'transaction_id is required for assignment' }, 400);
+        return NextResponse.json({ error: 'transaction_id is required for assignment' }, { status: 400 });
       }
 
       const txn = await db.selectOne<Transaction>('transactions', {
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       });
 
       if (!txn) {
-        return NextResponse.json({ error: 'Target transaction not found' }, 404);
+        return NextResponse.json({ error: 'Target transaction not found' }, { status: 404 });
       }
 
       // Mark transaction as PAID
@@ -131,8 +131,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, message: 'Notification dismissed' });
     }
 
-    return NextResponse.json({ error: 'Invalid action' }, 400);
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Operation failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Operation failed' }, { status: 500 });
   }
 }

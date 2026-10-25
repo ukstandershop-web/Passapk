@@ -305,3 +305,18 @@ export function parseWithDynamicRules(
   // Fallback to default static parser rules
   return parseNotification(packageName, title, content);
 }
+
+export function extractPaymentFromText(
+  arg1: string,
+  arg2?: string,
+  arg3?: string,
+  arg4?: ParserRule[]
+): ParsedNotification {
+  if (arg3 !== undefined) {
+    return parseNotification(arg1, arg2, arg3, arg4);
+  }
+  const text = arg1 || '';
+  const provider = arg2 || 'com.google.android.apps.messaging';
+  return parseNotification(provider, '', text, arg4);
+}
+

@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -43,6 +43,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, transactions: filtered });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch transactions' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch transactions' }, { status: 500 });
   }
 }

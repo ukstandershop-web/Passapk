@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.isImpersonating || !session.realOwnerId) {
-      return NextResponse.json({ error: 'No active impersonation session found' }, 400);
+      return NextResponse.json({ error: 'No active impersonation session found' }, { status: 400 });
     }
 
     const db = getDb();
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     });
 
     if (!ownerUser) {
-      return NextResponse.json({ error: 'Owner record not found' }, 404);
+      return NextResponse.json({ error: 'Owner record not found' }, { status: 404 });
     }
 
     // Restore owner session
@@ -68,6 +68,6 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to exit impersonation' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to exit impersonation' }, { status: 500 });
   }
 }

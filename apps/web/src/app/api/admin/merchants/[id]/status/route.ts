@@ -10,7 +10,7 @@ export async function POST(
   try {
     const session = await getSession();
     if (!session || session.role !== 'owner') {
-      return NextResponse.json({ error: 'Forbidden: Owner role required' }, 403);
+      return NextResponse.json({ error: 'Forbidden: Owner role required' }, { status: 403 });
     }
 
     const merchantId = params.id;
@@ -70,6 +70,6 @@ export async function POST(
       status,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Status update failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Status update failed' }, { status: 500 });
   }
 }

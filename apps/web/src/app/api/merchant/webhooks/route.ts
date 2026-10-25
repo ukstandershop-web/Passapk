@@ -7,13 +7,13 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
     const merchant = await db.selectOne<Merchant>('merchants', { id: session.merchantId });
     if (!merchant) {
-      return NextResponse.json({ error: 'Merchant not found' }, 404);
+      return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
     }
 
     const logs = await db.select<WebhookJob>('webhook_jobs', {
@@ -29,7 +29,7 @@ export async function GET() {
       logs,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch webhooks' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch webhooks' }, { status: 500 });
   }
 }
 
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     if (webhook_url !== undefined) {
       // Validate URL format if not empty
       if (webhook_url && !webhook_url.startsWith('http://') && !webhook_url.startsWith('https://')) {
-        return NextResponse.json({ error: 'Webhook URL must start with https:// or http://' }, 400);
+        return NextResponse.json({ error: 'Webhook URL must start with https:// or http://' }, { status: 400 });
       }
       updates.webhook_url = webhook_url.trim() || null;
     }
@@ -70,6 +70,6 @@ export async function POST(request: Request) {
       webhook_secret: updated.webhook_secret,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to update webhook config' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to update webhook config' }, { status: 500 });
   }
 }

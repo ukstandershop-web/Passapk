@@ -6,14 +6,14 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized: Merchant session required' }, 401);
+      return NextResponse.json({ error: 'Unauthorized: Merchant session required' }, { status: 401 });
     }
 
     const body = await request.json();
     const { plan_id, amount_paid, sender_account, payment_method, proof_data_url } = body;
 
     if (!plan_id || !amount_paid || !sender_account || !payment_method) {
-      return NextResponse.json({ error: 'Missing required proof fields' }, 400);
+      return NextResponse.json({ error: 'Missing required proof fields' }, { status: 400 });
     }
 
     const db = getDb();
@@ -47,6 +47,6 @@ export async function POST(request: Request) {
       proof: newProof,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to submit proof' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to submit proof' }, { status: 500 });
   }
 }

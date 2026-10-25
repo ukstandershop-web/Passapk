@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
@@ -18,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, accounts });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch accounts' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch accounts' }, { status: 500 });
   }
 }
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     } = body;
 
     if (!method || !account_title || !account_number) {
-      return NextResponse.json({ error: 'Method, account title, and number are required' }, 400);
+      return NextResponse.json({ error: 'Method, account title, and number are required' }, { status: 400 });
     }
 
     const db = getDb();
@@ -64,6 +64,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, account: newAccount }, { status: 201 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to create account' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to create account' }, { status: 500 });
   }
 }

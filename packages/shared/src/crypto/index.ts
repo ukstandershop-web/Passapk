@@ -119,3 +119,6 @@ export async function decryptAesGcm(base64Cipher: string, secretKey: string): Pr
 
   return decoder.decode(decryptedBuffer);
 }
+
+export const encryptSecret = encryptAesGcm;
+export const decryptSecret = decryptAesGcm;

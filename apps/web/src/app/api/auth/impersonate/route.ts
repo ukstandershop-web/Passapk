@@ -9,14 +9,14 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || session.role !== 'owner') {
-      return NextResponse.json({ error: 'Forbidden: Only owners can impersonate merchants' }, 403);
+      return NextResponse.json({ error: 'Forbidden: Only owners can impersonate merchants' }, { status: 403 });
     }
 
     const body = await request.json();
     const { merchant_id } = body;
 
     if (!merchant_id) {
-      return NextResponse.json({ error: 'merchant_id is required' }, 400);
+      return NextResponse.json({ error: 'merchant_id is required' }, { status: 400 });
     }
 
     const db = getDb();
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     });
 
     if (!merchant) {
-      return NextResponse.json({ error: 'Merchant not found' }, 404);
+      return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
     }
 
     // Find primary user for merchant
@@ -87,6 +87,6 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Impersonation failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Impersonation failed' }, { status: 500 });
   }
 }

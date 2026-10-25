@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, 400);
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
     const cleanEmail = email.toLowerCase().trim();
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         user_agent: userAgent,
         metadata: { reason: 'user_not_found' },
       });
-      return NextResponse.json({ error: 'Invalid email or password' }, 401);
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     // 2. Check brute force lockout
@@ -51,8 +51,7 @@ export async function POST(request: Request) {
       const now = Date.now();
       if (now < lockExpiry) {
         const remainingMinutes = Math.ceil((lockExpiry - now) / 60000);
-        return NextResponse.json(
-          {
+        return NextResponse.json({
             error: `Account is temporarily locked due to consecutive failed attempts. Please try again in ${remainingMinutes} minute(s).`,
             locked: true,
           },
@@ -98,7 +97,7 @@ export async function POST(request: Request) {
         );
       }
 
-      return NextResponse.json({ error: 'Invalid email or password' }, 401);
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     // 4. Check merchant account suspension/ban
@@ -110,8 +109,7 @@ export async function POST(request: Request) {
 
       if (merchant) {
         if (merchant.status === 'banned') {
-          return NextResponse.json(
-            { error: 'This merchant account has been permanently suspended by platform administration.' },
+          return NextResponse.json({ error: 'This merchant account has been permanently suspended by platform administration.' },
             { status: 403 }
           );
         }
@@ -138,7 +136,7 @@ export async function POST(request: Request) {
       });
 
       if (!totpRecord) {
-        return NextResponse.json({ error: '2FA configuration missing' }, 500);
+        return NextResponse.json({ error: '2FA configuration missing' }, { status: 500 });
       }
 
       let is2faVerified = false;
@@ -168,7 +166,7 @@ export async function POST(request: Request) {
           user_agent: userAgent,
           metadata: { reason: 'invalid_2fa_code' },
         });
-        return NextResponse.json({ error: 'Invalid 2FA authentication code or backup code' }, 401);
+        return NextResponse.json({ error: 'Invalid 2FA authentication code or backup code' }, { status: 401 });
       }
 
       await db.insert('auth_logs', {
@@ -250,6 +248,6 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Login failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Login failed' }, { status: 500 });
   }
 }

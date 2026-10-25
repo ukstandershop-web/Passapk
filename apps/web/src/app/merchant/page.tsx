@@ -303,7 +303,7 @@ export default async function MerchantDashboard() {
             <div className="space-y-2 text-xs">
               <div className="flex justify-between text-slate-400">
                 <span>Account Status:</span>
-                <span className="text-white capitalize">{merchant?.status || 'Active'}</span>
+                <span className="text-white capitalize">{merchant?.is_active ? 'Active' : 'Suspended'}</span>
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Monthly Limit:</span>

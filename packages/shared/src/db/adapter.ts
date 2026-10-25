@@ -50,10 +50,10 @@ export type FilterOperator = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' |
 export interface FilterCondition {
   column: string;
   operator: FilterOperator;
-  value: string | number | boolean | Array<string | number>;
+  value: string | number | boolean | null | Array<string | number>;
 }
 
-export type MatchFilters = Record<string, string | number | boolean | Array<string | number>> | FilterCondition[];
+export type MatchFilters = Record<string, string | number | boolean | null | Array<string | number>> | FilterCondition[];
 
 export interface QueryOptions {
   columns?: string | string[];
@@ -62,6 +62,7 @@ export interface QueryOptions {
   limit?: number;
   offset?: number;
   signal?: AbortSignal;
+  [key: string]: any;
 }
 
 export interface InsertOptions {
@@ -269,8 +270,11 @@ export class DatabaseAdapter {
         ? options.columns.join(',')
         : options.columns;
     }
-    if (options.filters) {
-      payload[PROXY_CONFIG.fields.filters] = this.normalizeFilters(options.filters);
+    const effectiveFilters = options.filters || Object.fromEntries(
+      Object.entries(options).filter(([k]) => !['columns', 'order', 'limit', 'offset', 'signal', 'filters'].includes(k))
+    );
+    if (Object.keys(effectiveFilters).length > 0) {
+      payload[PROXY_CONFIG.fields.filters] = this.normalizeFilters(effectiveFilters);
     }
     if (options.order) {
       payload[PROXY_CONFIG.fields.order] = options.order;

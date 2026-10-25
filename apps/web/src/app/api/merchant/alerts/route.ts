@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
@@ -28,7 +28,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, alerts });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch alert settings' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch alert settings' }, { status: 500 });
   }
 }
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -76,6 +76,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, alerts: result });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to save alert settings' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to save alert settings' }, { status: 500 });
   }
 }

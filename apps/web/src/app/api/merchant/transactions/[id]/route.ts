@@ -10,7 +10,7 @@ export async function GET(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const transactionId = params.id;
@@ -22,7 +22,7 @@ export async function GET(
     });
 
     if (!transaction) {
-      return NextResponse.json({ error: 'Transaction not found' }, 404);
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
     // Fetch related payment account
@@ -50,7 +50,7 @@ export async function GET(
       raw_notification: rawNotification,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to fetch transaction details' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to fetch transaction details' }, { status: 500 });
   }
 }
 
@@ -61,7 +61,7 @@ export async function PATCH(
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const transactionId = params.id;
@@ -75,7 +75,7 @@ export async function PATCH(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: 'Transaction not found' }, 404);
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
     const updates: Partial<Transaction> = {};
@@ -94,6 +94,6 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, transaction: updated });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to update transaction' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to update transaction' }, { status: 500 });
   }
 }

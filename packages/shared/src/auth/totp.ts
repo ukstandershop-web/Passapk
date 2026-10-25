@@ -74,7 +74,7 @@ export async function generateTotpCodeForCounter(secretBase32: string, counter: 
 
   const cryptoKey = await crypto.subtle.importKey(
     'raw',
-    keyBytes,
+    keyBytes.buffer as ArrayBuffer,
     { name: 'HMAC', hash: 'SHA-1' },
     false,
     ['sign']
@@ -108,10 +108,16 @@ export async function generateTotpCode(secretBase32: string): Promise<string> {
  * Verifies 6-digit TOTP code with time drift window (default +/- 1 step = +/- 30s)
  */
 export async function verifyTotpCode(
-  secretBase32: string,
-  userCode: string,
+  secretOrOpts: string | { token: string; secret: string },
+  userCodeParam?: string,
   toleranceSteps = 1
 ): Promise<boolean> {
+  if (typeof secretOrOpts === 'object') {
+    const { token, secret } = secretOrOpts;
+    return verifyTotpCode(secret, token, toleranceSteps);
+  }
+  const secretBase32 = secretOrOpts;
+  const userCode = userCodeParam || '';
   const cleanCode = userCode.trim();
   if (cleanCode.length !== 6) return false;
 
@@ -131,7 +137,20 @@ export async function verifyTotpCode(
 /**
  * Generates Google Authenticator compatible otpauth:// URI
  */
-export function generateTotpUri(label: string, issuer: string, secretBase32: string): string {
+export function generateTotpUri(
+  labelOrOpts: string | { secret: string; accountName?: string; issuer?: string },
+  issuerParam?: string,
+  secretBase32Param?: string
+): string {
+  if (typeof labelOrOpts === 'object') {
+    const { secret, accountName = 'user', issuer = 'PaisaBridge PK' } = labelOrOpts;
+    const encodedLabel = encodeURIComponent(`${issuer}:${accountName}`);
+    const encodedIssuer = encodeURIComponent(issuer);
+    return `otpauth://totp/${encodedLabel}?secret=${secret}&issuer=${encodedIssuer}&algorithm=SHA1&digits=6&period=30`;
+  }
+  const label = labelOrOpts;
+  const issuer = issuerParam || 'PaisaBridge PK';
+  const secretBase32 = secretBase32Param || '';
   const encodedLabel = encodeURIComponent(`${issuer}:${label}`);
   const encodedIssuer = encodeURIComponent(issuer);
   return `otpauth://totp/${encodedLabel}?secret=${secretBase32}&issuer=${encodedIssuer}&algorithm=SHA1&digits=6&period=30`;
@@ -180,3 +199,6 @@ export async function verifyBackupCode(
   remaining.splice(index, 1);
   return { isValid: true, remainingHashedCodes: remaining };
 }
+
+export const generateOtpAuthUri = generateTotpUri;
+export const verifyTotp = verifyTotpCode;

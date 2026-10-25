@@ -8,11 +8,11 @@ export async function POST(request: Request) {
     const { token, new_password } = body;
 
     if (!token || !new_password) {
-      return NextResponse.json({ error: 'Token and new password are required' }, 400);
+      return NextResponse.json({ error: 'Token and new password are required' }, { status: 400 });
     }
 
     if (new_password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters long' }, 400);
+      return NextResponse.json({ error: 'Password must be at least 8 characters long' }, { status: 400 });
     }
 
     const db = getDb();
@@ -25,8 +25,7 @@ export async function POST(request: Request) {
     });
 
     if (!resetRecord || resetRecord.used_at || resetRecord.expires_at < nowIso) {
-      return NextResponse.json(
-        { error: 'Password reset link is invalid or has expired. Please request a new one.' },
+      return NextResponse.json({ error: 'Password reset link is invalid or has expired. Please request a new one.' },
         { status: 400 }
       );
     }
@@ -74,6 +73,6 @@ export async function POST(request: Request) {
       message: 'Password reset successfully. You can now log in with your new password.',
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Reset password failed' }, 500);
+    return NextResponse.json({ error: err.message || 'Reset password failed' }, { status: 500 });
   }
 }

@@ -7,13 +7,13 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.merchantId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = getDb();
     const merchant = await db.selectOne<Merchant>('merchants', { id: session.merchantId });
     if (!merchant || !merchant.webhook_url) {
-      return NextResponse.json({ error: 'Please configure a Webhook URL first' }, 400);
+      return NextResponse.json({ error: 'Please configure a Webhook URL first' }, { status: 400 });
     }
 
     const testPayload = {
@@ -92,6 +92,6 @@ export async function POST(request: Request) {
       job,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to dispatch test webhook' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to dispatch test webhook' }, { status: 500 });
   }
 }

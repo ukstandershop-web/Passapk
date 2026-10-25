@@ -15,7 +15,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || !session.userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const secret = generateTotpSecret(20);
@@ -24,7 +24,7 @@ export async function GET() {
       accountName: session.email,
       issuer: 'PaisaBridge PK',
     });
-    const backupCodes = generateBackupCodes(10);
+    const { rawCodes: backupCodes } = await generateBackupCodes(10);
 
     const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=10&data=${encodeURIComponent(
       otpAuthUri
@@ -38,7 +38,7 @@ export async function GET() {
       backupCodes,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to initialize 2FA setup' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to initialize 2FA setup' }, { status: 500 });
   }
 }
 
@@ -46,20 +46,20 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { secret, token, backupCodes } = body;
 
     if (!secret || !token) {
-      return NextResponse.json({ error: 'Secret and verification code are required' }, 400);
+      return NextResponse.json({ error: 'Secret and verification code are required' }, { status: 400 });
     }
 
     // Verify the TOTP token using RFC 6238 standard
     const isValid = await verifyTotp({ token, secret });
     if (!isValid) {
-      return NextResponse.json({ error: 'Invalid 6-digit code. Check your authenticator app.' }, 400);
+      return NextResponse.json({ error: 'Invalid 6-digit code. Check your authenticator app.' }, { status: 400 });
     }
 
     const encryptionKey = process.env.ENCRYPTION_SECRET || 'paisabridge_32_byte_secret_key_pk!';
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, message: '2FA enabled successfully' });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to verify and activate 2FA' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to verify and activate 2FA' }, { status: 500 });
   }
 }
 
@@ -106,25 +106,25 @@ export async function DELETE(request: Request) {
   try {
     const session = await getSession();
     if (!session || !session.userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, 401);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { password } = body;
 
     if (!password) {
-      return NextResponse.json({ error: 'Password confirmation is required' }, 400);
+      return NextResponse.json({ error: 'Password confirmation is required' }, { status: 400 });
     }
 
     const db = getDb();
     const user = await db.selectOne<any>('users', { id: session.userId });
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, 404);
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const isMatch = await verifyPassword(password, user.password_hash);
     if (!isMatch) {
-      return NextResponse.json({ error: 'Incorrect password' }, 400);
+      return NextResponse.json({ error: 'Incorrect password' }, { status: 400 });
     }
 
     await db.delete('totp_secrets', { user_id: session.userId });
@@ -132,6 +132,6 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true, message: '2FA disabled successfully' });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to disable 2FA' }, 500);
+    return NextResponse.json({ error: err.message || 'Failed to disable 2FA' }, { status: 500 });
   }
 }

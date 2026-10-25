@@ -13,13 +13,14 @@ export interface ExtendedSession extends UserSession {
  * Handles token_version validation and merchant status check.
  */
 export async function getSession(): Promise<ExtendedSession | null> {
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get('pb_access_token')?.value;
-  const refreshToken = cookieStore.get('pb_refresh_token')?.value;
+  try {
+    const cookieStore = cookies();
+    const accessToken = cookieStore.get('pb_access_token')?.value;
+    const refreshToken = cookieStore.get('pb_refresh_token')?.value;
 
-  if (!accessToken && !refreshToken) {
-    return null;
-  }
+    if (!accessToken && !refreshToken) {
+      return null;
+    }
 
   // 1. Try validating access token first
   if (accessToken) {
@@ -90,4 +91,7 @@ export async function getSession(): Promise<ExtendedSession | null> {
   };
 
   return session;
+  } catch (err) {
+    return null;
+  }
 }
