@@ -5,9 +5,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { KeyRound, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-export default function ResetPasswordPage({ params }: { params: { token: string } }) {
+export default function ResetPasswordPage({ params }: { params: Promise<{ token: string }> }) {
+  const [token, setToken] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    params.then(p => setToken(p.token));
+  }, [params]);
+
   const router = useRouter();
-  const token = params.token;
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

@@ -5,7 +5,7 @@ import { StaffPermission } from '@paisabridge/shared';
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -13,6 +13,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    const params = await props.params;
     const userId = params.id;
     const db = getDb();
 
@@ -37,7 +38,7 @@ export async function DELETE(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -45,6 +46,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    const params = await props.params;
     const userId = params.id;
     const body = await request.json();
     const { permissions } = body;

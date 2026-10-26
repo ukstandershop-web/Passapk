@@ -14,7 +14,7 @@ export interface ExtendedSession extends UserSession {
  */
 export async function getSession(): Promise<ExtendedSession | null> {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const accessToken = cookieStore.get('pb_access_token')?.value;
     const refreshToken = cookieStore.get('pb_refresh_token')?.value;
 

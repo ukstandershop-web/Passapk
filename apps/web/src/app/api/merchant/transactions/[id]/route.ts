@@ -5,7 +5,7 @@ import { Transaction, RawNotification, PaymentAccount } from '@paisabridge/share
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -13,7 +13,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const transactionId = params.id;
+    const params = await props.params; const transactionId = params.id;
     const db = getDb();
 
     const transaction = await db.selectOne<Transaction>('transactions', {
@@ -56,7 +56,7 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -64,7 +64,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const transactionId = params.id;
+    const params = await props.params; const transactionId = params.id;
     const body = await request.json();
     const { status, refund_note } = body;
 

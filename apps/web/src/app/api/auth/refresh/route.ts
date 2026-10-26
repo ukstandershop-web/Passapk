@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'paisabridge_dev_jwt_secret_32_byte
 
 export async function POST() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const refreshToken = cookieStore.get('pb_refresh_token')?.value;
 
     if (!refreshToken) {

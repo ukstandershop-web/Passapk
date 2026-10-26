@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -12,7 +12,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const accountId = params.id;
+    const params = await props.params; const accountId = params.id;
     const body = await request.json();
 
     const db = getDb();
@@ -33,7 +33,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -41,7 +41,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const accountId = params.id;
+    const params = await props.params; const accountId = params.id;
     const db = getDb();
 
     await db.delete('payment_accounts', {

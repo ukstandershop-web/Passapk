@@ -5,7 +5,7 @@ import { generateSecureToken, sha256Hex, MerchantApiKey } from '@paisabridge/sha
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -13,6 +13,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const params = await props.params;
     const keyId = params.id;
     const db = getDb();
 
@@ -30,7 +31,7 @@ export async function DELETE(
 // Rotate key: creates a new secret for this key and returns it once
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -38,6 +39,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const params = await props.params;
     const keyId = params.id;
     const db = getDb();
 

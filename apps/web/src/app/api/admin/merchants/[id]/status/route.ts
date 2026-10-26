@@ -5,7 +5,7 @@ import { User } from '@paisabridge/shared';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -13,6 +13,7 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden: Owner role required' }, { status: 403 });
     }
 
+    const params = await props.params;
     const merchantId = params.id;
     const body = await request.json();
     const { status, reason } = body;

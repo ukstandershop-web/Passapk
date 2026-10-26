@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db';
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -12,7 +12,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const deviceId = params.id;
+    const params = await props.params; const deviceId = params.id;
     const db = getDb();
 
     await db.delete('bridge_devices', {

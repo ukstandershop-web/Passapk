@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'paisabridge_dev_jwt_secret_32_byte
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -16,7 +16,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized - Owner role required' }, { status: 403 });
     }
 
-    const merchantId = params.id;
+    const params = await props.params; const merchantId = params.id;
     const db = getDb();
 
     // Verify merchant exists
@@ -47,7 +47,7 @@ export async function POST(
     );
 
     // Set cookies for merchant session while retaining impersonation flag
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.set({
       name: 'pb_access_token',
       value: tokens.accessToken,
