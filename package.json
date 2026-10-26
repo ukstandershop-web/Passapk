@@ -1,0 +1,14 @@
+{
+  "name": "paisabridge-root",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@paisabridge/web"
+  },
+  "overrides": {
+    "next": "14.2.35"
+  }
+}
